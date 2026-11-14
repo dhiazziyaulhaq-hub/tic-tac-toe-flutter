@@ -1,0 +1,66 @@
+
+services:
+  tictactoe-php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tictactoe-php
+    ports:
+      - "8085:80"
+    environment:
+      DB_HOST: tictactoe-mysql
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_PORT: 3306
+    volumes:
+      - ./api:/var/www/html
+      - ./config:/var/www/config
+    depends_on:
+      tictactoe-mysql:
+        condition: service_healthy
+    networks:
+      - tictactoe-network
+
+  tictactoe-mysql:
+    image: mysql:8.0
+    container_name: tictactoe-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3309:3306"
+    volumes:
+      - tictactoe-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - tictactoe-network
+
+  tictactoe-phpmyadmin:
+    image: phpmyadmin:5-apache
+    container_name: tictactoe-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8086:80"
+    environment:
+      PMA_HOST: tictactoe-mysql
+      PMA_PORT: 3306
+    depends_on:
+      - tictactoe-mysql
+    networks:
+      - tictactoe-network
+
+networks:
+  tictactoe-network:
+    name: tictactoe-network
+    driver: bridge
+
+volumes:
+  tictactoe-mysql-data:

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'screens/login_page.dart';
 
 void main() => runApp(const TicTacToeApp());
 
@@ -190,7 +191,35 @@ class _GameHomeState extends State<GameHome> {
                 const SizedBox(height: 6),
                 const Text('Simple Game, Endless Fun!', style: TextStyle(color: navy, fontSize: 14)),
                 const SizedBox(height: 32),
-                SizedBox(width: 230, child: _actionButton('Mulai', onPressed: () => setState(() => page = AppPage.menu))),
+                SizedBox(
+                  width: 230,
+                  child: _actionButton(
+                    'Mulai',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(
+                            onLoginSuccess: () {
+                              Navigator.of(context).pop();
+
+                              setState(() {
+                                page = AppPage.menu;
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Login berhasil! Selamat bermain.'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),

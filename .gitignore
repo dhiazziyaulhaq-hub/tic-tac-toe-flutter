@@ -46,3 +46,27 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+.pub-cache/
+.idea/
+*.iml
+
+# Android
+android/.gradle/
+
+# Backend PHP
+backend-php/vendor/
+
+# Environment dan secret
+.env
+.env.*
+!.env.example
+
+# VS Code
+.vscode/
